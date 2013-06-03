@@ -13,12 +13,18 @@ define([
 function ($, _, Backbone, socket) {
     'use strict';
 
+    var _interval;
+
     return new (Backbone.View.extend({
         initialize: function () {
             var view = this;
 
-            socket.on('connect', function() {
+            socket.on('connect', function () {
                 view.startTimer();
+
+                socket.on('disconnect', function () {
+                    clearInterval(_interval);
+                });
             });
         },
 
@@ -51,7 +57,7 @@ function ($, _, Backbone, socket) {
                 return result;
             }
 
-            setInterval(function() {
+            _interval = setInterval(function() {
                 time++;
                 $('#connected').text(elapsedTime(time));
             }, 1000);
