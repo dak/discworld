@@ -1,12 +1,10 @@
-var fs = require('fs'),
-    net = require('net'),
+var net = require('net'),
     http = require('http'),
     express = require('express');
 
 var formatter = require('./lib/formatter');
 
-var config = JSON.parse(fs.readFileSync('config/config.json', 'utf8')),
-    app = express(),
+var app = express(),
     server = http.createServer(app),
     io = require('socket.io').listen(server);
 
@@ -19,7 +17,7 @@ app.get('/', function(req, res) {
 });
 
 io.sockets.on('connection', function(socket) {
-    var mud = net.createConnection(config.port, config.host);
+    var mud = net.createConnection(4242, 'discworld.atuin.net');
     mud.setEncoding('utf8');
 
     mud.addListener('data', function(data) {
