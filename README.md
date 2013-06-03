@@ -28,7 +28,7 @@ Your own [Discworld](http://discworld.atuin.net) client in your browser.
 ### Troubleshooting
 
 1. No color is showing up
-  - While in the game, send the following command: 'options terminal type=ansi'
+  - While in the game, send the following command: ```options terminal type=ansi```
 
 ## License
 
