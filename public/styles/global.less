@@ -1,0 +1,165 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    color: #909090;
+    background: #272727;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    padding: 15px;
+    height: 20px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.30);
+    -moz-box-shadow: 0 0 15px rgba(0, 0, 0, 0.30);
+    -webkit-box-shadow: 0 0 15px rgba(0, 0, 0, 0.30);
+    background: #222;
+    background: linear-gradient( 180deg, rgb(247,208,169) 0, rgb(249,156,85) 3px, rgb(242,116,31) 4px, rgb(231,111,31) 6px, #222 7px );
+
+    h1 {
+        color: rgb(213, 133, 70);
+        margin-top: -5px;
+    }
+    
+    #connected {
+        color: white;
+        float: right;
+        margin-top: -45px;
+        font-size: 16px;
+    }
+}
+
+#client {
+    position: fixed;
+    top: 51px;
+    right: 0;
+    bottom: 106px;
+    left: 0;
+    overflow: hidden;
+    
+    #output {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        bottom: 10px;
+        left: 10px;
+        overflow-x: hidden;
+        overflow-y: scroll;
+        font-family: 'Menlo', 'Andale Mono', 'Droid Sans Mono', monospace;
+        font-size: 14px;
+        line-height: 16px;
+        white-space: pre-wrap;
+        color: #dddddd;
+    }
+}
+
+#input {
+    position: fixed;
+    right: 0;
+    bottom: 61px;
+    left: 0;
+    padding: 10px;
+    height: 25px;
+    background: #1a1a1a;
+    
+    input {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        bottom: 8px;
+        left: 8px;
+        padding-left: 5px;
+        padding-right: 5px;
+        font-family: 'Menlo', 'Andale Mono', 'Droid Sans Mono', monospace;
+        font-size: 14px;
+        color: #333333;
+        background: #f3f3f3;
+        border: 1px solid white;
+        border-radius: 3px;
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.30);
+    }
+    
+    input:focus {
+        outline: none;
+    }
+}
+
+#shields {
+    position: fixed;
+    table-layout:fixed;
+    display: table;
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+    border-top: 1px solid whitesmoke;
+    overflow: hidden;
+    
+    .shield {
+        position: relative;
+        display: table-cell;
+        height: 60px;
+        border-left: 1px solid whitesmoke;
+        text-align: center;
+        line-height: 60px;
+        overflow: hidden;
+        word-break: none;
+    }
+    
+    .shield:first-child {
+        border-left: none;
+    }
+
+    .tpa {
+        background-color: rgb(187,207,170);
+        color: black;
+    }
+
+    .tpa-dull-red {
+        background-color: rgb(215,122,122);
+        color: black;
+    }
+
+    .tpa-bright-red {
+        background-color: rgb(178,30,38);
+        color: black;
+    }
+
+    .tpa-wobbling-orange {
+        background-color: rgb(240,137,0);
+        color: black;
+    }
+
+    .tpa-flickering-yellow {
+        background-color: rgb(235,206,0);
+        color: black;
+    }
+
+    .faith {
+        background-color: rgb(118,169,201);
+        color: black;
+    }
+
+    .bug {
+        background-color: rgb(159,109,141);
+        color: black;
+    }
+
+    .floater.floating {
+        position: absolute;
+        top: 6px;
+        right: 3px;
+        width: 47px;
+        height: 47px;
+        opacity: 0.75;
+        background-image: url(../img/shield.png);
+        background-repeat:no-repeat;
+        background-position: center center;
+        background-size: contain;
+    }
+}
