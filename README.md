@@ -6,6 +6,10 @@ Your own [Discworld](http://discworld.atuin.net) client in your browser.
 
 - Command History
 - Shield Tracking
+- MUD Protocols
+  1. MCCP (Mud Client Compression Protocol) version 2
+  2. MTTS (Mud Terminal Type Standard)
+  3. NAWS (Sends window size to the server)
 
 ## Future Features
 
@@ -14,6 +18,10 @@ Your own [Discworld](http://discworld.atuin.net) client in your browser.
 - Logging
 - Split view
 - Maps
+- HP and GP bars
+- XP Tracking
+- XTERM
+- MXP
 
 ## Installation & Usage
 
@@ -24,11 +32,6 @@ Your own [Discworld](http://discworld.atuin.net) client in your browser.
     $ npm install
     $ node server.js &
     $ open http://localhost:4242
-
-### Troubleshooting
-
-1. No color is showing up
-  - While in the game, send the following command: ```options terminal type=ansi```
 
 ## License
 
