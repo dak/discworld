@@ -24,6 +24,7 @@ function ($, _, Backbone, socket) {
 
                 socket.on('disconnect', function () {
                     clearInterval(_interval);
+                    $('#connected').text('DISCONNECTED AT ' + $('#connected').text());
                 });
             });
         },
