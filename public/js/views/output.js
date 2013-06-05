@@ -18,7 +18,7 @@ function ($, _, Backbone, socket, history) {
         initialize: function () {
             var view = this;
 
-            this.listenTo(history, 'add', this.echo);
+            this.listenTo(history, 'add add:newline', this.echo);
 
             socket.on('message', function(message) {
                 if ('update' === message.command) {
@@ -35,9 +35,15 @@ function ($, _, Backbone, socket, history) {
         },
 
         echo: function () {
-            var data = '<br /><span class="self">&gt; ' +
-                history.last().get('text') +
-                '</span><br />';
+            var data, text, last = history.last();
+
+            if (last) {
+                text = last.get('text');
+            } else {
+                text = '';
+            }
+
+            data = '<br /><span class="self">&gt; ' + text + '</span><br />';
 
             this.update(data);
         }

@@ -28,10 +28,13 @@ function ($, _, Backbone, socket, history) {
         },
 
         update: function () {
-            var $input = this.$el.find('input');
-
-            $input.val(history.last().get('text'));
-            $input.select();
+            var $input = this.$el.find('input'),
+                last = history.last();
+            
+            if (last) {
+                $input.val(last.get('text'));
+                $input.select();
+            }
         },
 
         keyup: function (e) {

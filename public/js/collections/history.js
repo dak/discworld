@@ -18,9 +18,22 @@ function ($, _, Backbone, Command) {
 
         current: 0,
 
-        add: function () {
+        add: function (models, options) {
+            var i, l, model;
+
+            if (!_.isArray(models)) models = models ? [models] : [];
+
             this.resetCurrent();
-            return Backbone.Collection.prototype.add.apply(this, arguments);
+
+            // Don't add the command if it's blank
+            for (i = 0, l = models.length; i < l; i++) {
+                if (!models[i].text) {
+                    model = models.splice(i, 1)[0];
+                    this.trigger('add:newline', model, this, options);
+                }
+            }
+
+            return Backbone.Collection.prototype.add.call(this, models, options);
         },
 
         next: function () {
