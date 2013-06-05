@@ -22,6 +22,7 @@ Your own [Discworld](http://discworld.atuin.net) client in your browser.
 - XP Tracking
 - XTERM
 - MXP
+- ZMP
 
 ## Installation & Usage
 
