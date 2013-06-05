@@ -1,10 +1,7 @@
-var net = require('net'),
-    http = require('http'),
-    express = require('express'),
-    zlib = require('zlib');
+var http = require('http'),
+    express = require('express');
 
-var formatter = require('./lib/formatter'),
-    MUDKit = require('./lib/mudkit');
+var MUDKit = require('./lib/mudkit');
 
 const HOST = 'discworld.starturtle.net';
 const PORT = 4242;
