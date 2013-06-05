@@ -31,26 +31,36 @@ const SUSP    = 237; // Suspend process
 const EOF     = 236; // End of file
 const SYNCH   = 242;
 
+const BEL     = 7;
+const LF      = 10;
+const CR      = 13;
+
 const BINARY            = 0; // RFC 856
 const ECHO              = 1; // RFC 857
-const SUPPRESS_GO_AHEAD = 3; // RFC 858
+const SGA               = 3; // RFC 858
 const STATUS            = 5; // RFC 859
 const TIMING_MARK       = 6; // RFC 860
 const TTYPE             = 24; // RFC 930, 1091, http://tintin.sourceforge.net/mtts/
+const OPT_EOR           = 25; // RFC 885
 const NAWS              = 31; // RFC 1073 (Negotiate About Window Size)
-const TERMINAL_SPEED    = 32;
+const TERMINAL_SPEED    = 32; // RFC 1079
 const LINE_MODE         = 34; // RFC 1184
 const NEW_ENVIRON       = 39; // RFC 1572
+const CHARSET           = 42; // RFC 2066
 const MSDP              = 69;
-const MSSP              = 70;
-const MCCP              = 86; // http://www.zuggsoft.com/zmud/mcp.htm
-const MXP               = 91;
+const MSSP              = 70; // MUD Server Status Protocol
+const MCCPv1            = 85; // MUD Client Compression Protocol (version 1)
+const MCCP              = 86; // MUD Client Compression Protocol (version 2) http://www.zuggsoft.com/zmud/mcp.htm
+const MSP               = 90; // MUD Sound Protocol http://www.zuggsoft.com/zmud/msp.htm
+const MXP               = 91; // MUD eXtension Protocol http://www.zuggsoft.com/zmud/mxp.htm
+const ZMP               = 93; // Zenith MUD Protocol http://discworld.starturtle.net/external/protocols/zmp.html
+const GCMP              = 201; // Generic Mud Communication Protocol http://www.ironrealms.com/gmcp-doc
 const EXOPL             = 255; // RFC 861
 
 const SEND              = 1;
 const IS                = 0;
 
-// 120? 93?
+// 120?
 
 var app = express(),
     server = http.createServer(app),
@@ -70,17 +80,19 @@ app.get('/', function (req, res) {
 });
 
 io.sockets.on('connection', function (socket) {
-    var mud, mccp = false, mtts = 0, encoding = 'ascii';
+    var mud, mccp = false, mtts = 0, encoding = 'ascii', timeout;
 
-    mud = net.createConnection(port, host, function () {
-        console.log('FIXME: Tell client connection is established and start timer.');
-    });
+    mud = net.createConnection(port, host);
 
     function processData(buf) {
         var last = 0, str, formatted;
 
         for (var i=0,len=buf.length; i<buf.length; i++) {
-            //console.log(buf[i] + ' = ' + (buf[i]).toString(16) + ' = ' + String.fromCharCode(buf[i]));
+            console.log(buf[i] + ' = ' + (buf[i]).toString(16) + ' = ' + String.fromCharCode(buf[i]));
+            
+            if (13 === buf[i] && 10 === buf[i+1]) {
+                //console.log('FIXME: Parse this as a new line and make it a <br />.');
+            }
 
             if (IAC === buf[i]) {
                 var command = buf[i+1],
@@ -98,11 +110,17 @@ io.sockets.on('connection', function (socket) {
 
                     return;
                 }
+                
+                if (SE === command) {
+                    console.log(buf[i] + ' ' + command);
+
+                    i+=1;
+                    last = i+1;
+
+                    return;
+                }
 
                 console.log(buf[i] + ' ' + command + ' ' + option);
-
-                i+=2;
-                last = i+1;
 
                 if (DO === command && TTYPE === option) {
                     console.log('iac will ttype');
@@ -111,20 +129,24 @@ io.sockets.on('connection', function (socket) {
 
                 // SB TTYPE SEND IAC SE
                 // http://tintin.sourceforge.net/mtts/
-                if (SB === command && TTYPE === option && SEND === buf[i+1] && IAC === buf[i+2] && SE === buf[i+3]) {
+                if (SB === command && TTYPE === option && SEND === buf[i+3] && IAC === buf[i+4] && SE === buf[i+5]) {
                     if (0 === mtts) {
-                        console.log('iac sb ttype is "discworld" iac se');
-                        mud.write(new Buffer(String.fromCharCode(IAC,SB,TTYPE,IS)+'"DISCWORLD"'+String.fromCharCode(IAC,SE), encoding));
+                        console.log('IAC SB TTYPE IS CLIENTNAME IAC SE');
                         mtts++;
+                        mud.write(new Buffer(String.fromCharCode(IAC,SB,TTYPE,IS)+'DISCWORLD'+String.fromCharCode(IAC,SE), encoding));
                     } else if (1 === mtts) {
-                        console.log('iac sb ttype is "ansi" iac se');
-                        mud.write(new Buffer(String.fromCharCode(IAC,SB,TTYPE,IS)+'"ANSI"'+String.fromCharCode(IAC,SE), encoding));
+                        console.log('iac sb ttype is ansi iac se');
                         mtts++;
+                        mud.write(new Buffer(String.fromCharCode(IAC,SB,TTYPE,IS)+'ANSI'+String.fromCharCode(IAC,SE), encoding));
                     } else {
-                        console.log('iac sb ttype is "ansi" iac se');
-                        mud.write(new Buffer(String.fromCharCode(IAC,SB,TTYPE,IS)+'"MTTS 5"'+String.fromCharCode(IAC,SE), encoding));
+                        console.log('iac sb ttype is mtts 5 iac se');
+                        mud.write(new Buffer(String.fromCharCode(IAC,SB,TTYPE,IS)+'MTTS 5'+String.fromCharCode(IAC,SE), encoding));
                         encoding = 'utf8';
                     }
+                    
+                    i+=5;
+                    last = i+1;
+                    return;
                 }
 
                 if (DONT === command && TTYPE === option) {
@@ -137,11 +159,12 @@ io.sockets.on('connection', function (socket) {
                 }
 
                 // IAC SB MCCP IAC SE
-                if (SB === command && MCCP === option && IAC === buf[i+1] && SE === buf[i+2]) {
+                if (SB === command && MCCP === option && IAC === buf[i+3] && SE === buf[i+4]) {
                     console.log('server now using deflate');
                     mccp = true;
-                    i+=2;
+                    i+=4;
                     last = i+1;
+                    return;
                 }
 
                 if (DO === command && NAWS === option) {
@@ -151,8 +174,8 @@ io.sockets.on('connection', function (socket) {
                     console.log('iac will naws');
                     mud.write(new Buffer(String.fromCharCode(IAC,WILL,NAWS), encoding));
 
-                    console.log('iac sb naws 0 120 0 40 iac se');
-                    mud.write(new Buffer(String.fromCharCode(IAC,SB,NAWS)+'0 120 0 40'+String.fromCharCode(IAC,SE), encoding));
+                    console.log('iac sb naws 0 120 0 45 iac se');
+                    mud.write(new Buffer(String.fromCharCode(IAC,SB,NAWS)+'0 120 0 45'+String.fromCharCode(IAC,SE), encoding));
                 }
 
                 if (WILL === command && MSSP === option) {
@@ -164,15 +187,26 @@ io.sockets.on('connection', function (socket) {
                     console.log('FIXME: start echoing output and turn on history');
 
                     console.log('iac dont echo');
-                    mud.write(new Buffer(String.fromCharCode(IAC,DONT,ECHO), encoding));
+                    mud.write(new Buffer(String.fromCharCode(IAC,DONT,ECHO,LF,CR), encoding));
                 }
 
                 if (WILL === command && ECHO === option) {
+                    echo = true;
                     console.log('FIXME: stop echoing output and turn off history');
 
                     console.log('iac do echo');
                     mud.write(new Buffer(String.fromCharCode(IAC,DO,ECHO), encoding));
                 }
+
+                if (WILL === command && ZMP === option) {
+                    console.log('FIXME: add zmp support');
+
+                    console.log('iac dont zmp');
+                    mud.write(new Buffer(String.fromCharCode(IAC,DONT,ZMP), encoding));
+                }
+                
+                i+=2;
+                last = i+1;
             }
         }
 
@@ -189,12 +223,35 @@ io.sockets.on('connection', function (socket) {
         processData(data);
     });
 
+    inflate.on('end', function() {
+        mccp = false;
+        console.log('server no longer using deflate');
+    });
+    
+    mud.on('connect', function (data) {
+        console.log('FIXME: Tell client connection is established and start timer.');
+    });
+
     mud.on('data', function (data) {
        if (mccp) {
             inflate.write(data);
         } else {
             processData(data);
         }
+    });
+    
+    mud.on('end', function (data) {
+        console.log('FIXME: Server ended connection.  Tell client disconnect occurred.');
+        console.log('FIXME: Attempt to reconnect immediately, then every 10 seconds.');
+        console.log('FIXME: Break out server code into its own function.')
+        /*timeout = setInterval(function () {
+            console.log('attempt to reconnect');
+            mud = net.createConnection(port, host, function() {
+                console.log('clear reconnect timeout');
+                clearInterval(timeout);
+                timeout = null;
+            });
+        }, 3000);*/
     });
 
     socket.on('message', function (data) {
