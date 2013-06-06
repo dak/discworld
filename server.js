@@ -82,9 +82,18 @@ io.sockets.on('connection', function (socket) {
     mudkit.on('data', function(data) {
         socket.emit('message', { command: 'update', data: data.toString() });
     });
+    
+    mudkit.on('naws', function() {
+        console.log('mudkit on naws');
+        socket.emit('naws');
+    });
 
     socket.on('message', function (data) {
         mudkit.mud.write(data + '\r\n', mudkit.encoding);
+    });
+    
+    socket.on('terminal', function (size) {
+        mudkit.windowSize(size);
     });
 });
 
