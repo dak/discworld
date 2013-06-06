@@ -5,14 +5,17 @@ Your own [Discworld](http://discworld.atuin.net) client in your browser.
 ## Features
 
 - Command History
-- Shield Tracking
+- Terminals
+  1. ANSI
+  2. Dumb
 - MUD Protocols
   1. MCCP (Mud Client Compression Protocol) version 2
   2. MTTS (Mud Terminal Type Standard)
-  3. NAWS (Sends window size to the server)
+  3. NAWS (automatically set and update the window size)
 
 ## Future Features
 
+- Shield Tracking
 - Aliases
 - Triggers
 - Logging
@@ -23,6 +26,7 @@ Your own [Discworld](http://discworld.atuin.net) client in your browser.
 - XTERM
 - MXP
 - ZMP
+- Tab completion
 
 ## Installation & Usage
 
