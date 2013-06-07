@@ -3,6 +3,7 @@ var http = require('http'),
 
 var MUDKit = require('./lib/mudkit');
 
+// const HOST = 'dwclone.starturtle.net';
 const HOST = 'discworld.starturtle.net';
 const PORT = 4242;
 
