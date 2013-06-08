@@ -5,6 +5,7 @@ Your own [Discworld](http://discworld.atuin.net) client in your browser.
 ## Features
 
 - Command History
+- UTF-8
 - Terminals
   1. ANSI
   2. Dumb
