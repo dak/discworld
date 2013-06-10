@@ -84,11 +84,6 @@ io.sockets.on('connection', function (socket) {
         socket.emit('message', { command: 'update', data: data.toString() });
     });
     
-    mudkit.on('error', function (err) {
-        console.log(err);
-        // util.debug(err);
-    });
-    
     mudkit.on('naws', function () {
         console.log('mudkit on naws');
         socket.emit('naws');
