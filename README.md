@@ -1,6 +1,7 @@
 # Discworld MUD Client
 
 Your own [Discworld](http://discworld.atuin.net) client in your browser.
+Also try http://discworld.starturtle.net/lpc/decafmud/web_client.html
 
 ## Features
 
