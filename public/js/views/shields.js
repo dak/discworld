@@ -20,6 +20,8 @@ function ($, _, Backbone, Handlebars, socket, group, history, template) {
     return new (Backbone.View.extend({
         initialize: function () {
             this.template = Handlebars.compile(template);
+
+            this.listenTo(group, 'change', this.render);
         },
 
         render: function () {

@@ -18,7 +18,7 @@ function ($, _, Backbone, Member) {
 
         initialize: function() {
             this.add({
-                name: 'Me'
+                id: 'Me'
             });
         }
     }))();
