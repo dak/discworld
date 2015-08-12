@@ -102,7 +102,9 @@ function ($, _, Backbone, socket, group, history) {
 
             tpa = text.match(/The (?:\w+ \w+) glow around (?:the |a )?(.+) (?:becomes (\w+ \w+)|disappears)\./) ||
                   text.match(/(Your) shield stops glowing a (?:\w+ \w+) and lapses back into (invisibility)\./) ||
+                  text.match(/(Your) shield changes from a (?:\w+ \w+) to a (\w+ \w+)\./) ||
                   text.match(/As (your) shield absorbs the impact, it becomes visible as a (\w+ \w+) glow./) ||
+                  text.match(/As (your) shield absorbs the impact, its glow changes from a (?:\w+ \w+) to a (\w+ \w+)\./) ||
                   text.match(/There is a sudden white flash around (?:the |a )?(.+)(\.)/);
 
             if (tpa instanceof Array) {
