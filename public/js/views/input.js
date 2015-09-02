@@ -8,10 +8,11 @@ define([
     'underscore',
     'backbone',
     'socket',
-    'collections/history'
+    'collections/history',
+    'collections/group'
 ],
 
-function ($, _, Backbone, socket, history) {
+function ($, _, Backbone, socket, history, group) {
     'use strict';
 
     var ENTER = 13,
@@ -30,19 +31,39 @@ function ($, _, Backbone, socket, history) {
         update: function () {
             var $input = this.$el.find('input'),
                 last = history.last();
-            
+
             if (last) {
                 $input.val(last.get('text'));
                 $input.select();
             }
         },
 
+        processCommand: function(command) {
+            var words = command.split(' ');
+
+            switch (words[0]) {
+            case 'group':
+                if (words[1] === 'add' && words[2]) {
+                    group.add({id: words[2]});
+                } else if (words[1] === 'remove' && words[2]) {
+                    group.remove({id: words[2]});
+                }
+            }
+        },
+
         keyup: function (e) {
-            var $input = this.$el.find('input');
+            var $input = this.$el.find('input'), input;
 
             if (ENTER === e.keyCode) {
-                socket.emit('message', $input.val());
-                history.add({text: $input.val()});
+                input = $input.val();
+
+                if (input.charAt(0) === '/') {
+                    this.processCommand(input.substr(1));
+                } else {
+                    socket.emit('message', input);
+                }
+
+                history.add({text: input});
                 $input.select();
             } else if (UP === e.keyCode) {
                 $input.val(history.previous().get('text'));
