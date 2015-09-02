@@ -27,11 +27,9 @@ function ($, _, Backbone, socket, Beep, group, history) {
     CHANGE = /(Your) shield changes from a (?:\w+ \w+) to a (\w+ \w+)\./;
     VISIBLE = /As (your) shield absorbs the impact, it becomes visible as a (\w+ \w+) glow./;
     IMPACT = /As (your) shield absorbs the impact, its glow changes from a (?:\w+ \w+) to a (\w+ \w+)\./;
-    DEVELOP = /A (\w+ \w+) glow develops around (?:the |a )?(.+)\./;
+    DEVELOP = /A (\w+ \w+) glow (?:develops|appears) around (?:the |a )?(.+)\./;
     TBROKE = /There is a sudden white flash around (?:the |a )?(.+)(\.)/;
     BROKE = /There is a sudden white flash\.  (Your) magical shield has broken(\.)/;
-
-    // A dull red glow appears around the skeleton warrior.
 
     EFF_KNOCK = /In blocking the attack the (?:.+) floating around you is knocked out of orbit./;
 
