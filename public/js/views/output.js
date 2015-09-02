@@ -15,7 +15,20 @@ define([
 function ($, _, Backbone, socket, group, history) {
     'use strict';
 
+    var CAST, TCHANGE, INVIS, CHANGE, VISIBLE, IMPACT, DEVELOP, TBROKE, BROKE, EFF_KNOCK;
     var _int;
+
+    CAST = /With a noise that sounds like &quot;Plink\!&quot;, everything around (?:the |a )?(.+) (flashes red) for a moment./;
+    TCHANGE = /The (?:\w+ \w+) glow around (?:the |a )?(.+) (?:becomes (\w+ \w+)|disappears)\./;
+    INVIS = /(Your) shield stops glowing a (?:\w+ \w+) and lapses back into (invisibility)\./;
+    CHANGE = /(Your) shield changes from a (?:\w+ \w+) to a (\w+ \w+)\./;
+    VISIBLE = /As (your) shield absorbs the impact, it becomes visible as a (\w+ \w+) glow./;
+    IMPACT = /As (your) shield absorbs the impact, its glow changes from a (?:\w+ \w+) to a (\w+ \w+)\./;
+    DEVELOP = /A (\w+ \w+) glow develops around (?:the |a )?(.+)\./;
+    TBROKE = /There is a sudden white flash around (?:the |a )?(.+)(\.)/;
+    BROKE = /There is a sudden white flash\.  (Your) magical shield has broken(\.)/;
+
+    EFF_KNOCK = /In blocking the attack the (?:.+) floating around you is knocked out of orbit./;
 
     return new (Backbone.View.extend({
         initialize: function () {
@@ -88,7 +101,7 @@ function ($, _, Backbone, socket, group, history) {
         eff: function (text) {
             var eff;
 
-            eff = text.match(/In blocking the attack the (?:.+) floating around you is knocked out of orbit./);
+            eff = text.match(EFF_KNOCK);
 
             if (eff instanceof Array) {
                 return this.colorize(text, eff[0], 'yellow');
@@ -98,18 +111,27 @@ function ($, _, Backbone, socket, group, history) {
         },
 
         tpa: function (text) {
-            var tpa, target, color, member;
+            var tpa, target, color, member, match;
 
-            tpa = text.match(/The (?:\w+ \w+) glow around (?:the |a )?(.+) (?:becomes (\w+ \w+)|disappears)\./) ||
-                  text.match(/(Your) shield stops glowing a (?:\w+ \w+) and lapses back into (invisibility)\./) ||
-                  text.match(/(Your) shield changes from a (?:\w+ \w+) to a (\w+ \w+)\./) ||
-                  text.match(/As (your) shield absorbs the impact, it becomes visible as a (\w+ \w+) glow./) ||
-                  text.match(/As (your) shield absorbs the impact, its glow changes from a (?:\w+ \w+) to a (\w+ \w+)\./) ||
-                  text.match(/There is a sudden white flash around (?:the |a )?(.+)(\.)/);
+            if (tpa = text.match(DEVELOP)) {
+                match = tpa.splice(1,2).reverse();
+            } else if (tpa = text.match(CAST) ||
+                             text.match(TCHANGE) ||
+                             text.match(INVIS) ||
+                             text.match(CHANGE) ||
+                             text.match(VISIBLE) ||
+                             text.match(IMPACT) ||
+                             text.match(TBROKE) ||
+                             text.match(BROKE))
+            {
+                match = tpa.splice(1,2);
+            } else {
+                return text;
+            }
 
-            if (tpa instanceof Array) {
-                target = tpa[1];
-                color = tpa[2];
+            if (match instanceof Array) {
+                target = match[0];
+                color = match[1];
 
                 if (target === 'your' || target === 'Your' || target === 'you') {
                     target = 'Me';
