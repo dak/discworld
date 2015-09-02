@@ -8,11 +8,12 @@ define([
     'underscore',
     'backbone',
     'socket',
+    'beep',
     'collections/group',
     'collections/history'
 ],
 
-function ($, _, Backbone, socket, group, history) {
+function ($, _, Backbone, socket, Beep, group, history) {
     'use strict';
 
     var CAST, TCHANGE, INVIS, CHANGE, VISIBLE, IMPACT, DEVELOP, TBROKE, BROKE, EFF_KNOCK;
@@ -104,6 +105,7 @@ function ($, _, Backbone, socket, group, history) {
             eff = text.match(EFF_KNOCK);
 
             if (eff instanceof Array) {
+                new Beep(22050).play(900, 1, [Beep.utils.amplify(8000)]);
                 return this.colorize(text, eff[0], 'yellow');
             }
 
@@ -159,7 +161,7 @@ function ($, _, Backbone, socket, group, history) {
                     case '.': // Shield broke
                         text = this.colorize(text, tpa[0], 'yellow');
                         if (member) { member.set('tpa', 'black'); }
-                        // BEEP!
+                        new Beep(22050).play(800, 0.3, [Beep.utils.amplify(8000)]);
                         break;
                     default:
                         text = this.colorize(text, tpa[0], 'lightskyblue');

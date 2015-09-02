@@ -11,6 +11,7 @@ require.config({
         handlebars: 'libs/handlebars/handlebars',
         underscore: 'libs/underscore/lodash',
         backbone: 'libs/backbone/backbone',
+        beep: 'libs/beep',
         websockets: '//' + location.host + '/socket.io/socket.io',
 
         // Handlebars extensions
@@ -44,6 +45,9 @@ require.config({
         },
         'handlebars': {
             exports: 'Handlebars'
+        },
+        'beep': {
+            exports: 'Beep'
         },
 
         'swag': ['handlebars']
