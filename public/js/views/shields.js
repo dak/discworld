@@ -21,7 +21,9 @@ function ($, _, Backbone, Handlebars, socket, group, history, template) {
         initialize: function () {
             this.template = Handlebars.compile(template);
 
-            this.listenTo(group, 'change', this.render);
+            this.listenTo(group, 'change add remove', this.render);
+
+            window.group = group; // TODO: Remove this
         },
 
         render: function () {

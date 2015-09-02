@@ -16,7 +16,9 @@ define([
 function ($, _, Backbone, socket, Beep, group, history) {
     'use strict';
 
-    var CAST, TCHANGE, INVIS, CHANGE, VISIBLE, IMPACT, DEVELOP, TBROKE, BROKE, EFF_KNOCK;
+    var CAST, TCHANGE, INVIS, CHANGE, VISIBLE, IMPACT, DEVELOP, TBROKE, BROKE;
+    var EFF_KNOCK;
+    var GROUP_JOIN, GROUP_LEAVE, NO_PROT, PROT;
     var _int;
 
     CAST = /With a noise that sounds like &quot;Plink\!&quot;, everything around (?:the |a )?(.+) (flashes red) for a moment./;
@@ -30,6 +32,11 @@ function ($, _, Backbone, socket, Beep, group, history) {
     BROKE = /There is a sudden white flash\.  (Your) magical shield has broken(\.)/;
 
     EFF_KNOCK = /In blocking the attack the (?:.+) floating around you is knocked out of orbit./;
+
+    GROUP_JOIN = /\[(?:.+)\] (.+) has joined the group./;
+    GROUP_LEAVE = /\[(?:.+)\] (.+) has left the group./;
+    NO_PROT = /(.+) has no arcane protection./;
+    PROT = /Arcane protection for (.+):-/;
 
     return new (Backbone.View.extend({
         initialize: function () {
@@ -73,6 +80,7 @@ function ($, _, Backbone, socket, Beep, group, history) {
         update: function (data) {
             var $output = this.$el.find('#output');
 
+            this.groupHandler(data);
             $output.append(this.highlight(data));
             $output.scrollTop($output.get(0).scrollHeight);
         },
@@ -91,10 +99,21 @@ function ($, _, Backbone, socket, Beep, group, history) {
             this.update(data);
         },
 
+        groupHandler: function (text) {
+            var member;
+
+            //text = this.grg(text);
+
+            if (member = text.match(GROUP_JOIN)) {
+                group.add({id: member[1].replace(/<(?:.|\n)*?>/gm, '')});
+            } else if (member = text.match(GROUP_LEAVE)) {
+                group.remove({id: member[1].replace(/<(?:.|\n)*?>/gm, '')});
+            }
+        },
+
         highlight: function (text) {
             text = this.tpa(text);
             text = this.eff(text);
-            //text = this.grg(text);
 
             return text;
         },
