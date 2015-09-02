@@ -9,10 +9,11 @@ define([
     'backbone',
     'socket',
     'collections/history',
-    'collections/group'
+    'collections/group',
+    'views/output'
 ],
 
-function ($, _, Backbone, socket, history, group) {
+function ($, _, Backbone, socket, history, group, output) {
     'use strict';
 
     var ENTER = 13,
@@ -44,10 +45,14 @@ function ($, _, Backbone, socket, history, group) {
             switch (words[0]) {
             case 'group':
                 if (words[1] === 'add' && words[2]) {
-                    group.add({id: words[2]});
+                    group.add({id: words.slice(2).join(' ')});
                 } else if (words[1] === 'remove' && words[2]) {
-                    group.remove({id: words[2]});
+                    group.remove({id: words.slice(2).join(' ')});
                 }
+                break;
+            case 'clear':
+                output.clear();
+                break;
             }
         },
 

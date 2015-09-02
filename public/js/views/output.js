@@ -31,6 +31,8 @@ function ($, _, Backbone, socket, Beep, group, history) {
     TBROKE = /There is a sudden white flash around (?:the |a )?(.+)(\.)/;
     BROKE = /There is a sudden white flash\.  (Your) magical shield has broken(\.)/;
 
+    // A dull red glow appears around the skeleton warrior.
+
     EFF_KNOCK = /In blocking the attack the (?:.+) floating around you is knocked out of orbit./;
 
     GROUP_JOIN = /\[(?:.+)\] (.+) has joined the group./;
@@ -83,6 +85,10 @@ function ($, _, Backbone, socket, Beep, group, history) {
             this.groupHandler(data);
             $output.append(this.highlight(data));
             $output.scrollTop($output.get(0).scrollHeight);
+        },
+
+        clear: function () {
+            this.$el.find('#output').empty();
         },
 
         echo: function () {

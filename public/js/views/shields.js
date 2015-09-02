@@ -37,8 +37,13 @@ function ($, _, Backbone, Handlebars, socket, group, history, template) {
         },
 
         shield: function (e) {
-            var name = $(e.currentTarget).text().trim(),
-                command = 'cast Transcendent Pneumatic Alleviator at ' + name;
+            var name = $(e.currentTarget).text().trim(), command;
+
+            if (name === 'skeleton warrior') {
+                name = 'my skeleton warrior 1';
+            }
+
+            command = 'cast Transcendent Pneumatic Alleviator at ' + name;
 
             history.add({text: command});
             socket.emit('message', command);
