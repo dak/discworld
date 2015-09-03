@@ -21,7 +21,7 @@ function ($, _, Backbone, socket, Beep, group, history) {
     var GROUP_JOIN, GROUP_LEAVE, NO_PROT, PROT;
     var _int;
 
-    CAST = /With a noise that sounds like &quot;Plink\!&quot;, everything around (?:the |a )?(.+) (flashes red) for a moment./;
+    CAST = /With a noise that sounds like &quot;Plink\!&quot;, everything around (?:the |a )?(.+) (flashes red) for a moment\./;
     TCHANGE = /The (?:\w+ \w+) glow around (?:the |a )?(.+) (?:becomes (\w+ \w+)|disappears)\./;
     INVIS = /(Your) shield stops glowing a (?:\w+ \w+) and lapses back into (invisibility)\./;
     CHANGE = /(Your) shield changes from a (?:\w+ \w+) to a (\w+ \w+)\./;
@@ -86,7 +86,7 @@ function ($, _, Backbone, socket, Beep, group, history) {
         },
 
         clear: function () {
-            this.$el.find('#output').empty();
+            this.$el.find('#output')[0].innerHTML = '';
         },
 
         echo: function () {
