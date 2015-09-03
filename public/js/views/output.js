@@ -162,6 +162,10 @@ function ($, _, Backbone, socket, Beep, group, history) {
                     target = 'Me';
                 }
 
+                if (target !== 'skeleton warrior') {
+                    target = target.split(' ').slice(0, 1)[0]
+                }
+
                 member = group.get(target);
 
                 switch (color) {
