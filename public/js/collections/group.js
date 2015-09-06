@@ -18,7 +18,10 @@ function ($, _, Backbone, Member) {
 
         initialize: function() {
             this.add({
-                id: 'Me'
+                id: 'Me',
+                name: 'Junquan',
+                floater: true,
+                tpa: 'green'
             });
         }
     }))();

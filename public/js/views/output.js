@@ -17,7 +17,7 @@ function ($, _, Backbone, socket, Beep, group, history) {
     'use strict';
 
     var CAST, TCHANGE, INVIS, CHANGE, VISIBLE, IMPACT, DEVELOP, TBROKE, BROKE;
-    var EFF_KNOCK;
+    var EFF_KNOCK, EFF_FLOAT;
     var GROUP_JOIN, GROUP_LEAVE, NO_PROT, PROT;
     var _int;
 
@@ -31,7 +31,8 @@ function ($, _, Backbone, socket, Beep, group, history) {
     TBROKE = /There is a sudden white flash around (?:the |a )?(.+)(\.)/;
     BROKE = /There is a sudden white flash\.  (Your) magical shield has broken(\.)/;
 
-    EFF_KNOCK = /In blocking the attack the (?:.+) floating around you is knocked out of orbit./;
+    EFF_KNOCK = /In blocking the attack the (?:.+) floating around (you) is knocked out of orbit\./;
+    EFF_FLOAT = /The (?:.+) begins to float around (you)\./
 
     GROUP_JOIN = /\[(?:.+)\] (.+) has joined the group./;
     GROUP_LEAVE = /\[(?:.+)\] (.+) has left the group./;
@@ -164,8 +165,16 @@ function ($, _, Backbone, socket, Beep, group, history) {
             eff = text.match(EFF_KNOCK);
 
             if (eff instanceof Array) {
+                group.get('Me').set('floater', false);
                 new Beep(22050).play(900, 1, [Beep.utils.amplify(8000)]);
                 return this.colorize(text, eff[0], 'yellow');
+            } else {
+                eff = text.match(EFF_FLOAT);
+
+                if (eff instanceof Array) {
+                    group.get('Me').set('floater', true);
+                    return this.colorize(text, eff[0], 'lightskyblue');
+                }
             }
 
             return text;
@@ -175,8 +184,6 @@ function ($, _, Backbone, socket, Beep, group, history) {
             var tpa, target, color, member, match, stripped;
 
             stripped = text.replace(/<br \/>/gm, ' ').replace(/<(?:.|\n)*?>/gm, '');
-            console.log(text);
-            console.log(stripped);
             if (tpa = stripped.match(DEVELOP)) {
                 match = tpa.splice(1,2).reverse();
             } else if (tpa = stripped.match(CAST) ||
