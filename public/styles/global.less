@@ -1,4 +1,7 @@
 body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
     margin: 0;
     padding: 0;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -8,17 +11,9 @@ body {
 }
 
 header {
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
-    padding: 15px;
-    height: 20px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.30);
-    -moz-box-shadow: 0 0 15px rgba(0, 0, 0, 0.30);
-    -webkit-box-shadow: 0 0 15px rgba(0, 0, 0, 0.30);
+    flex: 0 0 auto;
     background: #222;
-    background: linear-gradient( 180deg, rgb(247,208,169) 0, rgb(249,156,85) 3px, rgb(242,116,31) 4px, rgb(231,111,31) 6px, #222 7px );
+    border-bottom: 1px solid whitesmoke;
 
     h1 {
         color: rgb(213, 133, 70);
@@ -28,25 +23,38 @@ header {
     #connected {
         color: white;
         float: right;
-        margin-top: -45px;
+        padding: 2px 5px;
         font-size: 16px;
     }
 }
 
-#client {
-    position: fixed;
-    top: 51px;
-    right: 0;
-    bottom: 106px;
-    left: 0;
-    overflow: hidden;
+#spots {
+    flex: 0 0 auto;
+    border-bottom: 1px solid whitesmoke;
 
-    #output {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        bottom: 10px;
-        left: 10px;
+    ul {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        padding: 0 10px;
+        margin: 0;
+        list-style-type: none;
+
+        li {
+            padding: 4px 4px;
+            flex: 1 0 100px;
+        }
+    }
+}
+
+#client {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+
+    #output,
+    #scrollback {
+        margin: 0 10px;
         overflow-x: hidden;
         overflow-y: scroll;
         font-family: 'Menlo', 'Andale Mono', 'Droid Sans Mono', monospace;
@@ -54,14 +62,25 @@ header {
         line-height: 16px;
         white-space: pre-wrap;
         color: #dddddd;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    #scrollback {
+        height: 0px;
+    }
+
+    #divider {
+      height: 7px;
+      background: linear-gradient( 0, rgb(247,208,169) 0, rgb(249,156,85) 3px, rgb(242,116,31) 4px, rgb(231,111,31) 6px, #222 7px );
+    }
+
+    #output {
+        flex: 1 1 100%;
     }
 }
 
 #input {
-    position: fixed;
-    right: 0;
-    bottom: 61px;
-    left: 0;
+    flex: 0 0 auto;
     padding: 10px;
     height: 25px;
     background: #1a1a1a;
@@ -88,10 +107,9 @@ header {
 }
 
 #shields {
-    position: fixed;
-    table-layout:fixed;
+    flex: 0 0 auto;
+    table-layout: fixed;
     display: table;
-    bottom: 0;
     width: 100%;
     height: 60px;
     border-top: 1px solid whitesmoke;

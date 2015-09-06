@@ -55,12 +55,44 @@ function ($, _, Backbone, socket, Beep, group, history) {
             });
 
             $(window).resize(this.resize);
+            window.onmouseup = this.onMouseUp.bind(this);
+            window.onmousemove = this.onMouseMove.bind(this);
+        },
+
+        events: {
+            'mousedown #divider': 'onDividerMouseDown'
+        },
+
+        onDividerMouseDown: function () {
+            this.dividerMouseDown = true;
+        },
+
+        onMouseUp: function () {
+            this.dividerMouseDown = false;
+        },
+
+        onMouseMove: function (e) {
+            var sb = document.getElementById('scrollback'),
+                op = document.getElementById('output'),
+                height;
+
+            if (this.dividerMouseDown) {
+                height = e.clientY - sb.offsetTop;
+
+                if (height < 0) { height = 0; }
+
+                sb.style.height = height + 'px';
+                $('#scrollback').scrollTop(sb.scrollHeight);
+                $('#output').scrollTop(op.scrollHeight);
+                window.getSelection().removeAllRanges();
+            }
         },
 
         resize: function () {
             var cols, rows;
 
-            rows = Math.floor($('#output').height() / parseInt($('#output').css('line-height'), 10));
+            rows = Math.floor($('#output').height() / parseFloat($('#output').css('line-height')));
+            rows--;
 
             $('#output').append('<span id="char" style="visibility: hidden; pointer-events: none; position: absolute;">M</span>');
             cols = Math.floor($('#output').width() / ($('#char').width()+1));
@@ -78,11 +110,15 @@ function ($, _, Backbone, socket, Beep, group, history) {
         },
 
         update: function (data) {
-            var $output = this.$el.find('#output');
+            var $output = this.$el.find('#output'),
+                $scrollback = this.$el.find('#scrollback'),
+                text;
 
             this.groupHandler(data);
-            $output.append(this.highlight(data));
-            $output.scrollTop($output.get(0).scrollHeight);
+            text = this.highlight(data);
+            $output.append(text);
+            $scrollback.append(text);
+            $output.scrollTop(document.getElementById('output').scrollHeight);
         },
 
         clear: function () {
@@ -136,18 +172,21 @@ function ($, _, Backbone, socket, Beep, group, history) {
         },
 
         tpa: function (text) {
-            var tpa, target, color, member, match;
+            var tpa, target, color, member, match, stripped;
 
-            if (tpa = text.match(DEVELOP)) {
+            stripped = text.replace(/<br \/>/gm, ' ').replace(/<(?:.|\n)*?>/gm, '');
+            console.log(text);
+            console.log(stripped);
+            if (tpa = stripped.match(DEVELOP)) {
                 match = tpa.splice(1,2).reverse();
-            } else if (tpa = text.match(CAST) ||
-                             text.match(TCHANGE) ||
-                             text.match(INVIS) ||
-                             text.match(CHANGE) ||
-                             text.match(VISIBLE) ||
-                             text.match(IMPACT) ||
-                             text.match(TBROKE) ||
-                             text.match(BROKE))
+            } else if (tpa = stripped.match(CAST) ||
+                             stripped.match(TCHANGE) ||
+                             stripped.match(INVIS) ||
+                             stripped.match(CHANGE) ||
+                             stripped.match(VISIBLE) ||
+                             stripped.match(IMPACT) ||
+                             stripped.match(TBROKE) ||
+                             stripped.match(BROKE))
             {
                 match = tpa.splice(1,2);
             } else {
@@ -163,7 +202,7 @@ function ($, _, Backbone, socket, Beep, group, history) {
                 }
 
                 if (target !== 'skeleton warrior') {
-                    target = target.split(' ').slice(0, 1)[0]
+                    target = target.split(' ').slice(0, 1)[0];
                 }
 
                 member = group.get(target);
