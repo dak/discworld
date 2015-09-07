@@ -123,7 +123,21 @@ function ($, _, Backbone, socket, Beep, group, history) {
         },
 
         clear: function () {
-            this.$el.find('#output')[0].innerHTML = '';
+            var op = document.getElementById('output'),
+                sb = document.getElementById('scrollback'),
+                client = document.getElementById('client');
+
+            op.parentNode.removeChild(op);
+            sb.parentNode.removeChild(sb);
+
+            op = document.createElement('div');
+            sb = document.createElement('div');
+
+            op.id = 'output';
+            sb.id = 'scrollback';
+
+            client.appendChild(sb);
+            client.appendChild(op);
         },
 
         echo: function () {
