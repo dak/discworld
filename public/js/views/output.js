@@ -125,6 +125,7 @@ function ($, _, Backbone, socket, Beep, group, history) {
         clear: function () {
             var op = document.getElementById('output'),
                 sb = document.getElementById('scrollback'),
+                divider = document.getElementById('divider'),
                 client = document.getElementById('client');
 
             op.parentNode.removeChild(op);
@@ -136,7 +137,7 @@ function ($, _, Backbone, socket, Beep, group, history) {
             op.id = 'output';
             sb.id = 'scrollback';
 
-            client.appendChild(sb);
+            client.insertBefore(sb, divider);
             client.appendChild(op);
         },
 
