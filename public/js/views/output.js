@@ -17,11 +17,11 @@ function ($, _, Backbone, socket, Beep, group, history) {
     'use strict';
 
     var CAST, TCHANGE, INVIS, CHANGE, VISIBLE, IMPACT, DEVELOP, TBROKE, BROKE;
-    var EFF_KNOCK, EFF_FLOAT;
+    var EFF_KNOCK, EFF_FLOAT, EFF_MOVE;
     var GROUP_JOIN, GROUP_LEAVE, NO_PROT, PROT;
     var _int;
 
-    CAST = /With a noise that sounds like &quot;Plink\!&quot;, everything around (?:the |a )?(.+) (flashes red) for a moment\./;
+    CAST = /With a noise that sounds like &quot;Plink\!&quot;, (?:everything|the air) around (?:the |a )?(.+) (flashes red) for a moment\./;
     TCHANGE = /The (?:\w+ \w+) glow around (?:the |a )?(.+) (?:becomes (\w+ \w+)|disappears)\./;
     INVIS = /(Your) shield stops glowing a (?:\w+ \w+) and lapses back into (invisibility)\./;
     CHANGE = /(Your) shield changes from a (?:\w+ \w+) to a (\w+ \w+)\./;
@@ -33,6 +33,7 @@ function ($, _, Backbone, socket, Beep, group, history) {
 
     EFF_KNOCK = /In blocking the attack the (?:.+) floating around (you) is knocked out of orbit\./;
     EFF_FLOAT = /The (?:.+) begins to float around (you)\./
+    EFF_MOVE = /You realise that the (?:.+) is no longer floating around you\./;
 
     GROUP_JOIN = /\[(?:.+)\] (.+) has joined the group./;
     GROUP_LEAVE = /\[(?:.+)\] (.+) has left the group./;
@@ -65,10 +66,26 @@ function ($, _, Backbone, socket, Beep, group, history) {
         },
 
         onDividerMouseDown: function () {
+            var sb = document.getElementById('scrollback'),
+                op = document.getElementById('output');
+
+            sb.style.webkitUserSelect = 'none';
+            op.style.webkitUserSelect = 'none';
+            sb.style.userSelect = 'none';
+            op.style.userSelect = 'none';
+
             this.dividerMouseDown = true;
         },
 
         onMouseUp: function () {
+            var sb = document.getElementById('scrollback'),
+                op = document.getElementById('output');
+
+            sb.style.webkitUserSelect = 'text';
+            op.style.webkitUserSelect = 'text';
+            sb.style.userSelect = 'text';
+            op.style.userSelect = 'text';
+
             this.dividerMouseDown = false;
         },
 
@@ -177,7 +194,7 @@ function ($, _, Backbone, socket, Beep, group, history) {
         eff: function (text) {
             var eff;
 
-            eff = text.match(EFF_KNOCK);
+            eff = text.match(EFF_KNOCK) || text.match(EFF_MOVE);
 
             if (eff instanceof Array) {
                 group.get('Me').set('floater', false);
