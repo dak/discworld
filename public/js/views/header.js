@@ -23,9 +23,8 @@ function ($, _, Backbone, socket) {
                 view.startTimer();
 
                 socket.on('disconnect', function () {
-                    var time = $('#connected').text();
                     clearInterval(_interval);
-                    $('#connected').text('DISCONNECTED AT ' + time);
+                    $('#connected').text('DISCONNECTED');
                 });
             });
         },
