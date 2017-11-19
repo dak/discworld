@@ -4,7 +4,7 @@ var http = require('http'),
 var MUDKit = require('./lib/mudkit');
 
 // const HOST = 'dwclone.starturtle.net';
-const HOST = 'discworld.atuin.net';
+const HOST = 'discworld.starturtle.net';
 const PORT = 4242;
 
 const IAC     = 255; // interpret as command
@@ -59,31 +59,35 @@ const SEND              = 1;
 const IS                = 0;
 
 var app = express(),
-    server = http.createServer(app),
-    io = require('socket.io').listen(server);
+    server = http.Server(app),
+    io = require('socket.io')(server);
 
-io.configure('development', function () {
-    io.set('log level', 1);
-    io.set('transports', ['websocket']);
-});
+// io.configure('development', function () {
+//     io.set('log level', 1);
+//     io.set('transports', ['websocket']);
+// });
 
-app.configure(function () {
-    app.use(express.static(__dirname + '/public'));
-});
+// app.configure(function () {
+//     app.use(express.static(__dirname + '/public'));
+// });
+
+app.use(express.static(__dirname + '/public'));
 
 app.get('/', function (req, res) {
     res.sendfile(__dirname + '/public/index.html');
 });
 
-io.sockets.on('connection', function (socket) {
+io.on('connection', function (socket) {
+    console.log('connection');
+
     var mudkit = new MUDKit(PORT, HOST, function () {
         console.log('Connected');
     });
-    
+
     mudkit.on('data', function(data) {
         socket.emit('message', { command: 'update', data: data.toString() });
     });
-    
+
     mudkit.on('naws', function () {
         console.log('mudkit on naws');
         socket.emit('naws');
@@ -92,14 +96,16 @@ io.sockets.on('connection', function (socket) {
     socket.on('message', function (data) {
         mudkit.mud.write(data + '\r\n', mudkit.encoding);
     });
-    
+
     socket.on('terminal', function (size) {
         mudkit.windowSize(size);
     });
-    
+
     socket.on('error', function (err) {
         console.log(err);
     });
 });
 
-server.listen(4242);
+server.listen(PORT, function() {
+    console.log(`listening on *:${PORT}`);
+});

@@ -10,12 +10,12 @@ define([
 function (io) {
     'use strict';
 
-    var socket = io.connect(location.hostname);
+    var socket = io();
 
     socket.on('connect', function() {
         // resolve promise
         console.log('connected');
     });
-    
+
     return socket;
 });
