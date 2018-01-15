@@ -19,6 +19,7 @@ function ($, _, Backbone, socket, Beep, group, history) {
     var CAST, TCHANGE, INVIS, CHANGE, VISIBLE, IMPACT, DEVELOP, TBROKE, BROKE;
     var EFF_KNOCK, EFF_FLOAT, EFF_MOVE;
     var GROUP_JOIN, GROUP_LEAVE, NO_PROT, PROT;
+    var DEMON_ATTACK;
     var _int;
 
     CAST = /With a noise that sounds like &quot;Plink\!&quot;, (?:everything|the air) around (?:the |a )?(.+) (flashes red) for a moment\./;
@@ -39,6 +40,8 @@ function ($, _, Backbone, socket, Beep, group, history) {
     GROUP_LEAVE = /\[(?:.+)\] (.+) has left the group./;
     NO_PROT = /(.+) has no arcane protection./;
     PROT = /Arcane protection for (.+):-/;
+
+    DEMON_ATTACK = /As the demon begins to melt into shadow again, (?:.+)./;
 
     return new (Backbone.View.extend({
         initialize: function () {
@@ -187,6 +190,19 @@ function ($, _, Backbone, socket, Beep, group, history) {
         highlight: function (text) {
             text = this.tpa(text);
             text = this.eff(text);
+            text = this.dkdd(text);
+
+            return text;
+        },
+
+        dkdd: function (text) {
+            var dkdd;
+
+            dkdd = text.match(DEMON_ATTACK);
+
+            if (dkdd instanceof Array) {
+                return this.colorize(text, dkdd[0], 'orange');
+            }
 
             return text;
         },
